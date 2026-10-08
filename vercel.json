@@ -1,17 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "services": {
-    "finlit": {
-      "root": ".",
-      "entrypoint": "Dockerfile.vercel"
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": {
-        "service": "finlit"
-      }
-    }
-  ]
+  "outputDirectory": "demo-local"
 }

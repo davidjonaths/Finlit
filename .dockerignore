@@ -1,9 +1,0 @@
-.git
-.gradle
-.kotlin
-.vercel
-build
-.idea
-.vscode
-*.iml
-.DS_Store

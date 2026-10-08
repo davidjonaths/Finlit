@@ -1,6 +1,4 @@
 body { min-height: 100vh; }
-.local-notice { margin: 1.25rem auto; max-width: 72rem; padding: .8rem 1rem; border: 1px solid #e8d49e; border-radius: var(--radius-sm); background: #fff8e8; color: #654c16; font-size: .82rem; }
-.local-notice strong { color: #513c10; }
 .hero { padding: 2.75rem 0 2.25rem; background: var(--dark); }
 .hero h1, .hero h2 { color: var(--text-on-dark); }
 .hero p { color: var(--text-on-dark-sub); }
@@ -27,12 +25,14 @@ body { min-height: 100vh; }
 .quiz-option:hover { border-color:var(--sage); background:#f5faf6; }
 .quiz-option:disabled { cursor:default; }
 .opt-key { display:grid; width:1.8rem; height:1.8rem; flex:0 0 auto; place-items:center; border-radius:50%; background:var(--bg); font-weight:800; }
-.demo-footer { padding:2rem 0; color:var(--text-muted); font-size:.8rem; text-align:center; }
-.welcome-wrap { display:grid; min-height:100vh; grid-template-columns:1fr 1fr; }
-.welcome-panel { display:flex; flex-direction:column; justify-content:space-between; padding:clamp(2rem,7vw,7rem); background:var(--dark); color:var(--text-on-dark); }
-.welcome-panel p { max-width:30rem; color:var(--text-on-dark-sub); }
-.welcome-form { display:flex; align-items:center; justify-content:center; padding:2rem; }
-.welcome-form-inner { width:min(100%,26rem); }
+.auth-intro, .auth-features { position:relative; z-index:1; }
+.auth-features { display:flex; flex-direction:column; gap:1.25rem; }
+.auth-feature { padding:1.25rem; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:.75rem; }
+.auth-feature h3 { margin:0 0 .25rem; font-family:var(--font-heading); font-size:1.5rem; color:var(--text-on-dark); }
+.auth-feature p { margin:0; color:rgba(255,255,255,.4); font-size:.8125rem; }
+.auth-feature-goals h3 { color:#FDF4E1; }
+.auth-description { margin:0 0 2rem; color:var(--text-muted); }
+.auth-submit { margin-top:.75rem; }
 .empty-state { padding:1.75rem; text-align:center; color:var(--text-muted); }
 .button-row { display:flex; flex-wrap:wrap; gap:.65rem; }
 .toast { position:fixed; right:1rem; bottom:1rem; z-index:200; max-width:min(26rem,calc(100vw - 2rem)); padding:.9rem 1rem; border-radius:var(--radius-sm); background:var(--dark); color:white; box-shadow:var(--shadow-md); }
@@ -42,9 +42,6 @@ body { min-height: 100vh; }
   .container { padding-left:1rem; padding-right:1rem; }
   .stat-grid { grid-template-columns:1fr; }
   .demo-header { align-items:flex-start; flex-direction:column; }
-  .welcome-wrap { grid-template-columns:1fr; }
-  .welcome-panel { min-height:15rem; padding:2rem 1.25rem; }
-  .welcome-form { padding:2rem 1.25rem; }
   .demo-form { grid-template-columns:1fr; }
   .demo-form .wide { grid-column:auto; }
 }

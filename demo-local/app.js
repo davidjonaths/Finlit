@@ -105,7 +105,7 @@
       }
       return state;
     } catch (error) {
-      console.error("Data demo lokal tidak dapat dibaca.", error);
+      console.error("Data akun tidak dapat dibaca.", error);
       return initialState();
     }
   }
@@ -127,8 +127,8 @@
       }));
       return true;
     } catch (error) {
-      console.error("Data demo lokal tidak dapat disimpan.", error);
-      showToast("Browser tidak dapat menyimpan data. Periksa pengaturan penyimpanan browser.", true);
+      console.error("Data akun tidak dapat disimpan.", error);
+      showToast("Perubahan tidak dapat disimpan. Coba lagi.", true);
       return false;
     }
   }
@@ -166,10 +166,6 @@
     }, { income: 0, expense: 0 });
   }
 
-  function notice() {
-    return '<div class="local-notice"><strong>Akun lokal, bukan akun aman.</strong> Akun dan data hanya tersimpan di browser/perangkat ini, tanpa backend atau database. Kata sandi lokal tidak melindungi data dari orang yang memiliki akses ke browser. Jangan gunakan kata sandi yang dipakai di layanan lain atau masukkan data keuangan sensitif.</div>';
-  }
-
   function navigation(active) {
     const links = [
       ["home", "Beranda"], ["transactions", "Transaksi"], ["goals", "Tabungan"],
@@ -180,14 +176,13 @@
       <div class="navbar-nav">${links.map(([id, label]) =>
         `<a href="#${id}" class="nav-link ${active === id ? "active" : ""}">${label}</a>`
       ).join("")}<span class="navbar-divider"></span><button class="nav-logout" data-action="logout">Keluar</button></div>
-      <span class="navbar-user">${escapeHtml(state.profile?.name || "Akun lokal")}</span>
+      <span class="navbar-user">${escapeHtml(state.profile?.name || "Akun")}</span>
     </div></div></nav>`;
   }
 
   function shell(title, active, content) {
-    document.title = `${title} — FinLit Lokal`;
-    app.innerHTML = `${navigation(active)}${notice()}${content}
-      <footer class="demo-footer">FinLit · Akun dan data tersimpan di browser</footer><div id="toast" class="toast" hidden></div>`;
+    document.title = `${title} — FinLit`;
+    app.innerHTML = `${navigation(active)}${content}<div id="toast" class="toast" hidden></div>`;
     window.scrollTo(0, 0);
   }
 
@@ -207,35 +202,37 @@
   }
 
   function welcome() {
-    document.title = "FinLit — Akun Lokal";
     const isRegister = route() === "register";
-    app.innerHTML = `<main class="welcome-wrap">
-      <section class="welcome-panel">
-        <div><div class="auth-brand-big">Fin<span>Lit</span></div>
-          <p class="auth-tagline">Platform literasi dan simulasi keuangan untuk generasi yang lebih cerdas secara finansial.</p></div>
-        <p>Akun lokal ini hanya untuk penggunaan pribadi pada browser/perangkat ini. Tidak ada pemulihan kata sandi atau sinkronisasi.</p>
+    document.title = `${isRegister ? "Daftar" : "Masuk"} — FinLit`;
+    app.innerHTML = `<main class="auth-wrap">
+      <section class="auth-left">
+        <div class="auth-intro">
+          <div class="auth-brand-big">Fin<span>Lit</span></div>
+          <p class="auth-tagline">Platform literasi dan simulasi keuangan untuk generasi yang lebih cerdas secara finansial.</p>
+        </div>
+        <div class="auth-features">
+          <article class="auth-feature auth-feature-income"><h3>Catat Transaksi</h3><p>Lacak setiap rupiah yang masuk dan keluar</p></article>
+          <article class="auth-feature auth-feature-goals"><h3>Simulasi Target</h3><p>Strategi menabung yang personal dan terukur</p></article>
+        </div>
       </section>
-      <section class="welcome-form"><div class="welcome-form-inner">
-        <div class="overline-gold mb-1">Akun lokal</div><h2>${isRegister ? "Buat akun lokal" : "Masuk ke FinLit"}</h2>
-        <p class="text-muted mb-3">${isRegister ? "Akun hanya tersedia di browser ini." : "Masuk dengan akun yang tersimpan di browser ini."}</p>
-        ${notice()}
+      <section class="auth-right"><div class="auth-form-wrap">
+        <h2>${isRegister ? "Buat akun FinLit" : "Selamat datang kembali"}</h2>
+        <p class="auth-description">${isRegister ? "Daftar untuk mulai mengelola keuanganmu." : "Masuk ke akun FinLit kamu"}</p>
         <div id="auth-message" class="alert alert-danger" hidden></div>
         <form id="${isRegister ? "register-form" : "login-form"}">
           ${isRegister ? `<div class="form-group"><label class="form-label" for="display-name">Nama lengkap</label>
           <input id="display-name" name="name" class="form-control" maxlength="50" required autocomplete="name" placeholder="Contoh: Rani"></div>` : ""}
-          <div class="form-group"><label class="form-label" for="account-email">Alamat email</label>
+          <div class="form-group"><label class="form-label" for="account-email">Alamat Email</label>
           <input id="account-email" name="email" type="email" class="form-control" maxlength="254" required autocomplete="email" placeholder="nama@email.com"></div>
-          <div class="form-group"><label class="form-label" for="account-password">Kata sandi lokal</label>
+          <div class="form-group"><label class="form-label" for="account-password">Kata Sandi</label>
           <input id="account-password" name="password" type="password" class="form-control" minlength="8" required autocomplete="${isRegister ? "new-password" : "current-password"}" placeholder="Minimal 8 karakter"></div>
           ${isRegister ? `<div class="form-group"><label class="form-label" for="confirm-password">Konfirmasi kata sandi</label>
           <input id="confirm-password" name="confirmPassword" type="password" class="form-control" minlength="8" required autocomplete="new-password"></div>` : ""}
-          <button class="btn btn-primary btn-full btn-lg" type="submit">${isRegister ? "Buat Akun Lokal" : "Masuk"}</button>
+          <button class="btn btn-primary btn-full btn-lg auth-submit" type="submit">${isRegister ? "Buat Akun" : "Masuk ke Akun"}</button>
         </form>
-        <p class="auth-footer-link">${isRegister ? "Sudah punya akun lokal?" : "Belum punya akun lokal?"}
-          <a href="#${isRegister ? "login" : "register"}">${isRegister ? "Masuk" : "Daftar"}</a>
+        <p class="auth-footer-link">${isRegister ? "Sudah punya akun?" : "Belum punya akun?"}
+          <a href="#${isRegister ? "login" : "register"}">${isRegister ? "Masuk" : "Daftar gratis"}</a>
         </p>
-        ${state.users.length ? `<details class="mt-2"><summary class="text-sm">Akun tersimpan di browser ini (${state.users.length})</summary>
-          <ul class="text-sm mt-1">${state.users.map(user=>`<li>${escapeHtml(user.email)}</li>`).join("")}</ul></details>` : ""}
       </div></section>
     </main>`;
   }
@@ -250,7 +247,7 @@
     shell("Beranda", "home", `<header class="hero"><div class="container">
       <div class="overline-gold mb-1">Beranda</div><h1>Halo, ${escapeHtml(state.profile.name)}</h1>
       <p class="mb-3">Ringkasan keuanganmu.</p>
-      <div class="stat-grid">${statCard("Total Pemasukan", sum.income, "income", "Tersimpan di browser")}${statCard("Total Pengeluaran", sum.expense, "expense", "Tersimpan di browser")}${statCard("Saldo Bersih", sum.income - sum.expense, "balance", "Pemasukan dikurangi pengeluaran")}</div>
+      <div class="stat-grid">${statCard("Total Pemasukan", sum.income, "income", "Seluruh catatan")}${statCard("Total Pengeluaran", sum.expense, "expense", "Seluruh catatan")}${statCard("Saldo Bersih", sum.income - sum.expense, "balance", "Pemasukan dikurangi pengeluaran")}</div>
     </div></header>
     <main class="container page-content">
       <div class="section-title">Fitur</div><div class="feature-grid mb-3">
@@ -274,7 +271,7 @@
   function transactionsPage() {
     const sum = totals();
     shell("Transaksi", "transactions", `<header class="hero"><div class="container">
-      <div class="demo-header"><div><div class="overline-gold mb-1">Transaksi</div><h2>Pencatatan Keuangan</h2><p>Catat transaksi di browser ini.</p></div></div>
+      <div class="demo-header"><div><div class="overline-gold mb-1">Transaksi</div><h2>Pencatatan Keuangan</h2><p>Catat pemasukan dan pengeluaranmu.</p></div></div>
       <div class="stat-grid">${statCard("Pemasukan",sum.income,"income","Seluruh catatan")}${statCard("Pengeluaran",sum.expense,"expense","Seluruh catatan")}${statCard("Saldo Bersih",sum.income-sum.expense,"balance","Pemasukan dikurangi pengeluaran")}</div>
     </div></header><main class="container page-content">
       <section class="card mb-3"><div class="card-body"><div class="section-title">Tambah transaksi</div>
@@ -340,7 +337,7 @@
       return {key,label:new Intl.DateTimeFormat("id-ID",{month:"short"}).format(date),...values};
     });
     shell("Laporan", "reports", `<main class="container page-content">
-      <header class="demo-header"><div class="page-header"><h2>Laporan Keuangan</h2><p>Ringkasan dari transaksi yang tersimpan di browser.</p></div>
+      <header class="demo-header"><div class="page-header"><h2>Laporan Keuangan</h2><p>Ringkasan transaksi keuanganmu.</p></div>
       <label class="form-label">Bulan <input id="report-month" type="month" class="form-control" value="${escapeHtml(monthValue)}"></label></header>
       <div class="stat-grid mb-3">${statCard("Pemasukan",sum.income,"income","Bulan dipilih")}${statCard("Pengeluaran",sum.expense,"expense","Bulan dipilih")}${statCard("Saldo",sum.income-sum.expense,"balance","Bulan dipilih")}</div>
       <section class="card mb-3"><div class="card-body"><h3 class="mb-2">Pemasukan vs pengeluaran — 6 bulan</h3>
@@ -380,13 +377,13 @@
 
   function profilePage() {
     shell("Profil", "profile", `<main class="container page-content"><section style="max-width:38rem;margin:auto">
-      <header class="page-header"><div class="overline-gold mb-1">Profil lokal</div><h2>${escapeHtml(state.profile.name)}</h2><p>Akun dan profil ini hanya tersedia di browser ini.</p></header>
+      <header class="page-header"><div class="overline-gold mb-1">Profil</div><h2>${escapeHtml(state.profile.name)}</h2></header>
       <div class="card mb-3"><div class="card-body"><h3 class="mb-2">Ubah nama tampilan</h3><form id="profile-form">
         <div class="form-group"><label class="form-label" for="profile-name">Nama</label><input id="profile-name" name="name" class="form-control" maxlength="50" value="${escapeHtml(state.profile.name)}" required></div>
         <button class="btn btn-primary" type="submit">Simpan Nama</button></form></div></div>
-      <div class="card"><div class="card-body"><h3 class="mb-1">Data lokal</h3><p class="text-sm mb-2">${state.transactions.length} transaksi · ${state.goals.length} target tabungan</p>
+      <div class="card"><div class="card-body"><h3 class="mb-1">Data Akun</h3><p class="text-sm mb-2">${state.transactions.length} transaksi · ${state.goals.length} target tabungan</p>
         <div class="button-row"><button class="btn btn-danger" data-action="clear-data">Hapus transaksi dan target</button><button class="btn btn-danger" data-action="delete-account">Hapus akun &amp; semua data</button><button class="btn btn-secondary" data-action="logout">Keluar</button></div>
-        <p class="text-xs text-muted mt-2">Keluar hanya menutup sesi lokal. Data tetap di browser sampai kamu menghapusnya.</p>
+        <p class="text-xs text-muted mt-2">Keluar dari akun FinLit.</p>
       </div></div></section></main>`);
   }
 
@@ -416,7 +413,7 @@
       const confirmPassword = String(data.get("confirmPassword") || "");
       if (!name || !email || password.length < 8) return setAuthError("Isi semua data dan gunakan kata sandi minimal 8 karakter.");
       if (password !== confirmPassword) return setAuthError("Konfirmasi kata sandi tidak sama.");
-      if (state.users.some(user => user.email === email)) return setAuthError("Email ini sudah memiliki akun lokal di browser ini.");
+      if (state.users.some(user => user.email === email)) return setAuthError("Email ini sudah terdaftar.");
       const submitButton = form.querySelector('button[type="submit"]');
       submitButton.disabled = true;
       try {
@@ -439,8 +436,8 @@
           navigate("home");
           render();
           showToast(restoredLegacyData
-            ? "Akun lokal dibuat dan catatan dari demo sebelumnya dipindahkan."
-            : "Akun lokal dibuat. Catatan hanya ada di browser ini.");
+            ? "Akun berhasil dibuat dan catatan sebelumnya telah dipindahkan."
+            : "Akun berhasil dibuat.");
         } else {
           state.users = state.users.filter(item => item.email !== email);
           state.activeEmail = null;
@@ -450,8 +447,8 @@
           state.legacyData = previousLegacyData;
         }
       } catch (error) {
-        console.error("Akun lokal tidak dapat dibuat.", error);
-        setAuthError("Browser tidak mendukung pembuatan akun lokal. Perbarui browser dan coba lagi.");
+        console.error("Akun tidak dapat dibuat.", error);
+        setAuthError("Akun tidak dapat dibuat. Coba lagi.");
       } finally {
         if (submitButton.isConnected) submitButton.disabled = false;
       }
@@ -461,7 +458,7 @@
       const email = String(data.get("email") || "").trim().toLowerCase();
       const password = String(data.get("password") || "");
       const user = state.users.find(item => item.email === email);
-      if (!user) return setAuthError("Akun lokal tidak ditemukan di browser ini. Periksa email atau buat akun lokal.");
+      if (!user) return setAuthError("Email atau kata sandi tidak sesuai. Periksa kembali.");
       const submitButton = form.querySelector('button[type="submit"]');
       submitButton.disabled = true;
       try {
@@ -473,8 +470,8 @@
           render();
         }
       } catch (error) {
-        console.error("Login akun lokal gagal diproses.", error);
-        setAuthError("Browser tidak mendukung verifikasi akun lokal.");
+        console.error("Login akun gagal diproses.", error);
+        setAuthError("Tidak dapat masuk. Coba lagi.");
       } finally {
         if (submitButton.isConnected) submitButton.disabled = false;
       }
@@ -484,7 +481,7 @@
       const name = String(data.get("name") || "").trim();
       if (!name) return;
       state.profile.name = name;
-      if (saveState()) { render(); showToast("Nama demo diperbarui."); }
+      if (saveState()) { render(); showToast("Nama berhasil diperbarui."); }
       return;
     }
     if (form.id === "transaction-form") {
@@ -499,7 +496,7 @@
         date: String(data.get("date")),
         notes: String(data.get("notes") || "").trim()
       });
-      if (saveState()) { render(); showToast("Transaksi tersimpan di browser ini."); }
+      if (saveState()) { render(); showToast("Transaksi berhasil disimpan."); }
       return;
     }
     if (form.id === "goal-form") {
@@ -608,15 +605,15 @@
         if (saveState()) { render(); showToast("Target dihapus."); }
         break;
       case "clear-data":
-        if (confirm("Hapus semua transaksi dan target lokal dari browser ini?")) {
+        if (confirm("Hapus semua transaksi dan target tabungan?")) {
           state.transactions = [];
           state.goals = [];
             state.legacyData = null;
-          if (saveState()) { render(); showToast("Data lokal sudah dihapus."); }
+          if (saveState()) { render(); showToast("Transaksi dan target tabungan berhasil dihapus."); }
         }
         break;
       case "delete-account": {
-        if (!confirm("Hapus akun lokal beserta semua transaksi dan targetnya dari browser ini? Tindakan ini tidak dapat dibatalkan.")) break;
+        if (!confirm("Hapus akun beserta semua transaksi dan target tabungannya? Tindakan ini tidak dapat dibatalkan.")) break;
         const activeUser = state.users.find(user => user.email === state.activeEmail);
         state.users = state.users.filter(user => user.email !== state.activeEmail);
         state.activeEmail = null;
@@ -626,7 +623,7 @@
         if (saveState()) {
             navigate("home");
             render();
-            showToast("Akun lokal dan semua datanya sudah dihapus.");
+            showToast("Akun dan semua datanya berhasil dihapus.");
         } else if (activeUser) {
             state.users.push(activeUser);
             activateUser(activeUser);

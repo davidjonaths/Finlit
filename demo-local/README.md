@@ -14,4 +14,4 @@ npx --yes http-server . -p 8000
 
 Open <http://localhost:8000/demo-local/>. The file server only serves static assets; it does not run the Spring application.
 
-To erase accounts and their data, clear this site's browser data. **Profil → Hapus semua data lokal** removes transactions and savings goals for the signed-in account.
+To erase the signed-in account and all its data, use **Profil → Hapus akun & semua data**. **Profil → Hapus transaksi dan target** only clears the current account's transaction and savings-goal records.

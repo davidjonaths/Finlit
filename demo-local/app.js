@@ -385,8 +385,8 @@
         <div class="form-group"><label class="form-label" for="profile-name">Nama</label><input id="profile-name" name="name" class="form-control" maxlength="50" value="${escapeHtml(state.profile.name)}" required></div>
         <button class="btn btn-primary" type="submit">Simpan Nama</button></form></div></div>
       <div class="card"><div class="card-body"><h3 class="mb-1">Data lokal</h3><p class="text-sm mb-2">${state.transactions.length} transaksi · ${state.goals.length} target tabungan</p>
-        <div class="button-row"><button class="btn btn-danger" data-action="clear-data">Hapus semua data lokal</button><button class="btn btn-secondary" data-action="logout">Keluar</button></div>
-        <p class="text-xs text-muted mt-2">Keluar hanya menutup tampilan profil. Data tetap tersimpan di browser sampai kamu menghapusnya.</p>
+        <div class="button-row"><button class="btn btn-danger" data-action="clear-data">Hapus transaksi dan target</button><button class="btn btn-danger" data-action="delete-account">Hapus akun &amp; semua data</button><button class="btn btn-secondary" data-action="logout">Keluar</button></div>
+        <p class="text-xs text-muted mt-2">Keluar hanya menutup sesi lokal. Data tetap di browser sampai kamu menghapusnya.</p>
       </div></div></section></main>`);
   }
 
@@ -422,6 +422,7 @@
       try {
         const salt = createSalt();
         const passwordHash = await hashPassword(password, salt);
+        const previousLegacyData = state.legacyData;
         const user = {
           name,
           email,
@@ -440,6 +441,13 @@
           showToast(restoredLegacyData
             ? "Akun lokal dibuat dan catatan dari demo sebelumnya dipindahkan."
             : "Akun lokal dibuat. Catatan hanya ada di browser ini.");
+        } else {
+          state.users = state.users.filter(item => item.email !== email);
+          state.activeEmail = null;
+          state.profile = null;
+          state.transactions = [];
+          state.goals = [];
+          state.legacyData = previousLegacyData;
         }
       } catch (error) {
         console.error("Akun lokal tidak dapat dibuat.", error);
@@ -604,9 +612,27 @@
           state.transactions = [];
           state.goals = [];
             state.legacyData = null;
-          if (saveState()) { render(); showToast("Data demo sudah dihapus."); }
+          if (saveState()) { render(); showToast("Data lokal sudah dihapus."); }
         }
         break;
+      case "delete-account": {
+        if (!confirm("Hapus akun lokal beserta semua transaksi dan targetnya dari browser ini? Tindakan ini tidak dapat dibatalkan.")) break;
+        const activeUser = state.users.find(user => user.email === state.activeEmail);
+        state.users = state.users.filter(user => user.email !== state.activeEmail);
+        state.activeEmail = null;
+        state.profile = null;
+        state.transactions = [];
+        state.goals = [];
+        if (saveState()) {
+            navigate("home");
+            render();
+            showToast("Akun lokal dan semua datanya sudah dihapus.");
+        } else if (activeUser) {
+            state.users.push(activeUser);
+            activateUser(activeUser);
+        }
+        break;
+      }
       case "quiz-answer":
         if (quizChoice !== null) return;
         quizChoice = Number(button.dataset.index);
